@@ -36,8 +36,6 @@ class GrupoSensoresTest {
         planta.adicionar(v01);
     }
 
-    // ---- agregação recursiva ----
-
     @Test
     void totalDeSensoresDeveContarTodosOsNiveis() {
         assertEquals(5, planta.totalSensores());
@@ -66,7 +64,7 @@ class GrupoSensoresTest {
     void nivelDoGrupoDeveSerOPiorDosFilhosEmQualquerProfundidade() {
         t01.registrar(20);
         p01.registrar(5);
-        t02.registrar(85);     // alerta, no fundo da árvore
+        t02.registrar(85);
         p02.registrar(5);
         v01.registrar(1);
 
@@ -75,7 +73,7 @@ class GrupoSensoresTest {
         assertEquals(Nivel.ALERTA, planta.nivel());
         assertEquals(Nivel.NORMAL, envase.nivel());
 
-        p02.registrar(11);     // crítico vence alerta
+        p02.registrar(11);
         assertEquals(Nivel.CRITICO, planta.nivel());
     }
 
@@ -105,17 +103,14 @@ class GrupoSensoresTest {
 
     @Test
     void contagemPorNivelDeveIncluirZerosEContarCadaSensorUmaVez() {
-        t01.registrar(85);   // alerta
-        p01.registrar(11);   // crítico
+        t01.registrar(85);
+        p01.registrar(11);
         t02.registrar(10);
-        p02.registrar(10);   // crítico (limite inclusivo)
-        // v01 sem leitura: normal
+        p02.registrar(10);
 
         assertEquals(Map.of(Nivel.NORMAL, 2L, Nivel.ALERTA, 1L, Nivel.CRITICO, 2L), planta.contagemPorNivel());
         assertEquals(Map.of(Nivel.NORMAL, 1L, Nivel.ALERTA, 0L, Nivel.CRITICO, 1L), caldeira1.contagemPorNivel());
     }
-
-    // ---- busca, caminho, descrição ----
 
     @Test
     void buscarDeveEncontrarEmQualquerProfundidadeInclusiveOProprioGrupo() {
@@ -158,8 +153,6 @@ class GrupoSensoresTest {
         assertEquals(esperado, planta.descrever());
     }
 
-    // ---- invariantes de adicionar ----
-
     @Test
     void adicionarDeveRecusarNuloEODeveSerOProprioGrupo() {
         assertThrows(NullPointerException.class, () -> planta.adicionar(null));
@@ -168,10 +161,8 @@ class GrupoSensoresTest {
 
     @Test
     void adicionarDeveRecusarCicloComAncestral() {
-        // planta é ancestral de caldeira1: caldeira1.adicionar(planta) fecharia um ciclo
         assertThrows(IllegalArgumentException.class, () -> caldeira1.adicionar(planta));
         assertThrows(IllegalArgumentException.class, () -> caldeira1.adicionar(caldeiraria));
-        // e a árvore continua finita e intacta
         assertEquals(5, planta.totalSensores());
         assertTrue(planta.pai().isEmpty());
     }
@@ -203,8 +194,6 @@ class GrupoSensoresTest {
         assertDoesNotThrow(() -> g2.adicionar(new SensorFolha("T", "u", 1, 2)));
     }
 
-    // ---- remover ----
-
     @Test
     void removerDeveAtualizarTotaisESoltarOFilho() {
         assertTrue(envase.remover(p01));
@@ -217,7 +206,7 @@ class GrupoSensoresTest {
 
     @Test
     void removerNaoDeveAtingirNetosNemEstranhos() {
-        assertFalse(planta.remover(p02));          // neto, não filho direto
+        assertFalse(planta.remover(p02));
         assertFalse(planta.remover(new SensorFolha("X", "u", 1, 2)));
         assertFalse(planta.remover(null));
         assertEquals(5, planta.totalSensores());

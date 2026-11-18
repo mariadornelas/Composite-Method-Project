@@ -10,10 +10,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** O que caracteriza o Composite: tratamento uniforme, estrutura recursiva e interface segura. */
 class CompositeDesignTest {
 
-    /** Um cliente que só conhece o tipo comum: serve para folha e para grupo. */
     private static String relatorio(ComponenteMonitorado c) {
         return c.nome() + ": " + c.nivel() + ", " + c.totalSensores() + " sensor(es)";
     }
@@ -39,9 +37,9 @@ class CompositeDesignTest {
         sub.adicionar(new SensorFolha("B", "u", 1, 2));
         sub.adicionar(new GrupoSensores("vazio"));
 
-        assertEquals(2, raiz.filhos().size());      // um grupo e uma folha
-        assertEquals(2, sub.filhos().size());       // uma folha e um grupo vazio
-        assertEquals(2, raiz.totalSensores());      // grupos vazios não contam como sensor
+        assertEquals(2, raiz.filhos().size());
+        assertEquals(2, sub.filhos().size());
+        assertEquals(2, raiz.totalSensores());
     }
 
     @Test
@@ -93,8 +91,6 @@ class CompositeDesignTest {
         assertEquals(s.totalSensores(), g.totalSensores());
         assertEquals(s.contagemPorNivel(), g.contagemPorNivel());
     }
-
-    // ---- interface segura: só o grupo gerencia filhos ----
 
     private static boolean temMetodo(Class<?> c, String nome) {
         return Arrays.stream(c.getMethods()).map(Method::getName).anyMatch(nome::equals);
